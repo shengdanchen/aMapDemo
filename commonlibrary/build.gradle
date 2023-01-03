@@ -1,0 +1,102 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    compileSdkVersion rootProject.ext.android.compileSdk
+    buildToolsVersion rootProject.ext.android.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.android.minSdk
+        targetSdkVersion rootProject.ext.android.targetSdk
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+        ndk {
+            abiFilters 'armeabi', 'armeabi-v7a', 'armeabi-v8a', 'x86', 'x86_64', 'mips', 'mips64'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    task makeJar(type: Copy) {
+        //删除存在的jar
+        delete "build/libs/yxSDK.jar"
+        //设置拷贝文件
+        from("build/intermediates/bundles/release")
+        //打进jar后文件目录
+        into("build/libs/")
+        //将classes.jar放入build/libs目录下
+        //include,exclude参数来设置过滤
+        include("classes.jar")
+        //重命名为yxSDK.jar
+        rename("classes.jar", "yxSDK.jar")
+    }
+    makeJar.dependsOn(build)
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+//    repositories {
+//        maven { url "https://jitpack.io" }
+//        mavenCentral()
+//    }
+    buildFeatures {
+        viewBinding true
+        dataBinding = true
+    }
+}
+
+dependencies {
+    // 网络请求依赖
+    api   rootProject.ext.dependencies["rxjava"]
+    api   rootProject.ext.dependencies["rxandroid"]
+    api   rootProject.ext.dependencies["retrofit"]
+    api   rootProject.ext.dependencies["adapter-rxjava2"]
+    api   rootProject.ext.dependencies["gson"]
+    api   rootProject.ext.dependencies["interceptor"]
+
+    //mvvm
+    api   rootProject.ext.dependencies["lifecycle-viewmodel"]
+    api   rootProject.ext.dependencies["lifecycle-extensions"]
+    //netty
+    api   rootProject.ext.dependencies["netty"]
+    //log工具
+    api   rootProject.ext.dependencies["logger"]
+
+    //MQTT 车路智行暂时不打包进 release
+    api   rootProject.ext.dependencies["mqttv3"]
+    api   rootProject.ext.dependencies["service"]
+    api   rootProject.ext.dependencies["support-v4"]
+    api   rootProject.ext.dependencies["localbroadcastmanager"]
+
+    //BaseRecyclerViewAdapterHelper
+//    api 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
+    api   rootProject.ext.dependencies["baseRecyclerViewAdapterHelper"]
+
+    api rootProject.ext.dependencies["eventbus"]
+
+    api rootProject.ext.dependencies["Toasty"]
+    api rootProject.ext.dependencies["glide"]
+    annotationProcessor  rootProject.ext.dependencies["glide_processor"]
+
+    //这些有部分可以拆到v2x-ui模块中
+    api   rootProject.ext.dependencies["appcompat"]
+    api   rootProject.ext.dependencies["material"]
+    api   rootProject.ext.dependencies["annotations"]
+    api   rootProject.ext.dependencies["constraintlayout"]
+    api   rootProject.ext.dependencies["junit"]
+    api   rootProject.ext.dependencies["ext-junit"]
+    api   rootProject.ext.dependencies["espresso-core"]
+}
