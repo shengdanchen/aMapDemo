@@ -41,7 +41,7 @@ public class GDMapFragment extends BaseMapFragment<FragmentGdMapBinding, BaseVie
     @Override
     protected TileProvider getTileProvider() {
         final String url = "file://" + getContext().getExternalFilesDir("tiles_xy") + "/%d/R12/C25/%d_%d_%d.png";
-
+//        return null;
         return new TileOverlayOptions().tileProvider(new UrlTileProvider(256, 256) {
 
             @Override
